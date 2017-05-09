@@ -193,8 +193,12 @@ function book(app){
     })
 
     async function testf(res,url){
-        var data =  await request.get(url)
-        res.send(data)
+        const origin = require('./originlib/BIQUGE')
+        var biquge = new origin()
+        var book = await biquge.getBook("大主宰")
+        res.send(JSON.stringify(book))
+        // var data =  await request.get(url)
+        // res.send(data)
     }
     app.get('/test',(req,res)=>{
         var url = req.query.url
