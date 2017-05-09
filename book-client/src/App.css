@@ -1,0 +1,75 @@
+.titlebar {
+  padding: 0px 15px;
+  color:white;
+  background: #333;
+  height: 45px;
+  position: relative;
+  display: flex; 
+  justify-content: space-between;
+  align-items: center;
+}
+.titlebar .title{
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%,-50%)
+}
+body{
+  color:#333;
+}
+ul{
+  padding: 0px;
+  margin: 0px;
+}
+.wrap{
+    white-space: nowrap;
+    overflow: hidden;
+    display: block;
+    text-overflow: ellipsis;
+}
+.title{
+  
+}
+.review{
+  clear:both;
+  padding: 20px;
+  border-top: 1px solid #f1f1f1;
+  border-bottom: 1px solid #f1f1f1;
+}
+.menu{
+  padding: 10px 20px;
+  font-size: 14px;
+}
+.menu li{
+  list-style: none;
+  padding: 10px 10px;
+}
+.menu li+li{
+  border-top: 1px solid #f1f1f1;
+}
+.menu_footer{
+  display: flex;
+  justify-content: space-between;
+  padding: 20px;
+}
+.menu_footer>a{
+  border-radius: 3px;
+  border:solid 1px #dfdcd1;
+  min-width: 28%;
+  display: inline-block;
+  text-align: center;
+  height: 30px;
+  line-height: 30px;
+  text-decoration: none;
+}
+.menu_footer>a:active{
+  background: rgb(239,239,239);
+}
+.content{
+  padding: 15px;
+}
+.toolbar{
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 15px;
+}

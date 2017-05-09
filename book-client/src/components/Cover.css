@@ -1,0 +1,20 @@
+.cover_pic{
+    float: left;
+    width: 84px;
+}
+.review{
+    
+}
+.cover{
+    padding: 10px 20px;
+    overflow: auto;
+}
+.cover_info{
+    margin-left: 100px;
+}
+.cover_info>section{
+    padding: 2px 0px;
+}
+.disabel{
+    color:#aaa;
+}
