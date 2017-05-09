@@ -3,7 +3,7 @@ var router = express.Router();
 const path = require("path")
 /* GET home page. */
 router.get('/', function(req, res, next) {
-  res.render('index', { title: 'Express' });
+  res.render('index', { title: process.version });
 });
 /* GET home page. */
 router.get('/menu/:book', function(req, res, next) {
