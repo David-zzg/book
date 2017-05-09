@@ -1,6 +1,9 @@
 const fs = require('fs')
 const path = require('path')
-const {Book,createBook,isBookExist} = require('./book')
+const bookobj = require('./book')
+const Book = bookobj.Book
+const createBook = bookobj.createBook
+const isBookExist = bookobj.isBookExist
 const express  = require('express')
 function book(app){
     //设置跨域访问  
