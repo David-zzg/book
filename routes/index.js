@@ -8,7 +8,7 @@ router.get('/', function(req, res, next) {
 /* GET home page. */
 router.get('/menu/:book', function(req, res, next) {
   // console.log('touch')
-  res.sendFile(path.resolve(__dirname,"../public/index.html"))
+  res.sendFile(path.resolve(__dirname,"../public/index2.html"))
   // res.render('index', { title: 'Express' });
 });
 
