@@ -4,6 +4,7 @@ const bookobj = require('./book')
 const Book = bookobj.Book
 const createBook = bookobj.createBook
 const isBookExist = bookobj.isBookExist
+const request = require("superagent")
 function book(app){
     //设置跨域访问  
     // app.all('*', function(req, res, next) {  
@@ -189,6 +190,16 @@ function book(app){
             var artile = book.getArticle(lastitem.url)
             artile.getContent().then(data=>res.send(data))
         })
+    })
+    app.get('/test',(req,res)=>{
+        var url = req.query.url
+        if(!url){
+            sendError(res,"没有url")
+        }else{
+            request.get(url).then(data=>{
+                res.send(data)
+            })
+        }
     })
 }
 module.exports = book
