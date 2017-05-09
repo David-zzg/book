@@ -75,8 +75,6 @@ function book(app){
     //获取指定书目的封面信息
     app.get("/getBookInfo",(req,res)=>{
         var bookName = getBookName(req,res)
-        sendSuccess(res,bookName)
-        return
         if(!bookName)return
         var book = getBook(bookName)
         getCover(book).then(data=>{
@@ -193,14 +191,17 @@ function book(app){
             artile.getContent().then(data=>res.send(data))
         })
     })
+
+    async function testf(res,url){
+        var data =  await request.get(url)
+        res.send(data)
+    }
     app.get('/test',(req,res)=>{
         var url = req.query.url
         if(!url){
             sendError(res,"没有url")
         }else{
-            request.get(url).then(data=>{
-                res.send(data)
-            })
+            testf(res,url)
         }
     })
 }
