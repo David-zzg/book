@@ -75,6 +75,8 @@ function book(app){
     //获取指定书目的封面信息
     app.get("/getBookInfo",(req,res)=>{
         var bookName = getBookName(req,res)
+        sendSuccess(res,bookName)
+        return
         if(!bookName)return
         var book = getBook(bookName)
         getCover(book).then(data=>{
@@ -85,7 +87,7 @@ function book(app){
     //获取指定书目的分页信息
     app.get("/getBookPage",(req,res)=>{
         var bookName = getBookName(req,res)
-        if(!bookName)return
+        if(!bookName){return}
         var book = getBook(bookName)
         book.then(item=>{
             var menu = item.getMenu()
