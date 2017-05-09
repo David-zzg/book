@@ -192,11 +192,20 @@ function book(app){
         })
     })
 
-    async function testf(res,url){
-        const origin = require('./originlib/BIQUGE')
-        var biquge = new origin()
-        var book = await biquge.getBook("大主宰")
-        res.send(JSON.stringify(book))
+    function testf(res,url){
+        class a{
+            get(){
+                return "1"
+            }
+        }
+        var b = new a()
+        console.log(b.get())
+        res.send(b.get())
+        return 
+        // const origin = require('./originlib/BIQUGE')
+        // var biquge = new origin()
+        // var book = await biquge.getBook("大主宰")
+        // res.send(JSON.stringify(book))
         // var data =  await request.get(url)
         // res.send(data)
     }
