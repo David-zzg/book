@@ -57,12 +57,12 @@ export default class CoverBox extends React.Component{
     fetchData(first=true){
         var db = {}
         var list = []
-        list.push(request.get(`${window. API}/getBookMenu?book=${this.props.book}&page=${getQuery("page",1)}`))
+        list.push(request.get(`${window. API}/getBookMenu?book=${this.props.book}&origin=${this.props.origin}&page=${getQuery("page",1)}`))
         if(first){
             //获取书籍信息
-            list.push(request.get(`${window. API}/getBookInfo?book=${this.props.book}`))
+            list.push(request.get(`${window. API}/getBookInfo?book=${this.props.book}&origin=${this.props.origin}`))
             //获取分页信息
-            list.push(request.get(`${window. API}/getBookPage?book=${this.props.book}`))
+            list.push(request.get(`${window. API}/getBookPage?book=${this.props.book}&origin=${this.props.origin}`))
         }
         Promise.all(list).then((data)=>{
             var state = {

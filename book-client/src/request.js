@@ -1,8 +1,9 @@
 import axios from "axios"
-export default {
+var method = {
     get:(url)=>{
         return axios.get(url).then(data=>{
             return data.data
         })
     }
 }
+export default method

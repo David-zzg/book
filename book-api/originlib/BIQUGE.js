@@ -1,4 +1,4 @@
-const {Origin} = require('../origin.js')
+const Origin = require('../origin.js')
 const {getContent} = require('../request')
 const Book = require('../book.js')
 const Menu = require('../menu.js')
@@ -130,12 +130,22 @@ class BIQUGE extends Origin{
         return bookurl
     }
 
-    async getSearch(name,page=0){
-        var url = `http://zhannei.baidu.com/api/customsearch/searchwap?q=${encodeURI(name)}&p=${page}&s=8823758711381329060`
-        var result = await request.get(url)
-        console.log(result)
-        return result
+    //查找书籍获取搜索结果
+    async getListByName(name,page=0){
+        var url = `http://zhannei.baidu.com/cse/search?s=8823758711381329060&q=${encodeURI(name)}&submit=&p=${page}`
+        var $ = await getContent(url)
+        var list = []
+        $('.result-item').each(function(){
+            list.push({
+                name:$(this).find(".result-game-item-title-link").text().replace(/\s|\\r|\\n/g,""),
+                url:$(this).find(".result-game-item-title-link").attr("href"),
+                pic:$(this).find(".result-game-item-pic-link-img").attr("src"),
+                author:$(this).find('.result-game-item-info-tag').first().find("span").last().text().replace(/\s|\\r|\\n/g,"")
+            })
+        })
+        return list
     }
+
     //获取书籍
     async getBook(name){
         var url = await this.getURLByName(name)

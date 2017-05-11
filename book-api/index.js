@@ -5,14 +5,22 @@ const Book = bookobj.Book
 const createBook = bookobj.createBook
 const isBookExist = bookobj.isBookExist
 const request = require("superagent")
+const commonEvent = require("./event")
 function book(app){
     //设置跨域访问  
-    // app.all('*', function(req, res, next) {  
-    //     res.header("Access-Control-Allow-Origin", "*");  
-    //     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");  
-    //     res.header("Access-Control-Allow-Methods","PUT,POST,GET,DELETE,OPTIONS");  
-    //     next();  
-    // });  
+    app.all('*', function(req, res, next) {  
+        res.header("Access-Control-Allow-Origin", "*");  
+        res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");  
+        res.header("Access-Control-Allow-Methods","PUT,POST,GET,DELETE,OPTIONS");  
+        next();  
+    });  
+
+    function  errorHanlde(err,res) {
+        sendError(res,err.code)
+    }
+
+    
+
     async function getContent(chapter=1,res){
         const origin = require('./originlib/BIQUGE')
         var biquge = new origin()
@@ -27,9 +35,9 @@ function book(app){
 
     var bookList = {}
 
-    async function getBook(name){
+    async function getBook(name,from="BIQUGE"){
         if(bookList[name])return bookList[name]
-        const origin = require('./originlib/BIQUGE')
+        const origin = require('./originlib/'+from)
         var biquge = new origin()
         var book = await biquge.getBook(name)
         bookList[name] = book
@@ -62,6 +70,15 @@ function book(app){
             return bookName
         }
     }
+    var getOrigin = (req,res)=>{
+        var origin = req.query.origin
+        if(!origin){
+            sendError(res,"缺少来源")
+            return ""
+        }else{
+            return origin
+        }
+    }
     var getChapter = (req,res)=>{
         var chapter = req.query.from
         if(!chapter){
@@ -79,7 +96,7 @@ function book(app){
         var book = getBook(bookName)
         getCover(book).then(data=>{
             sendSuccess(res,data)
-        })
+        }).catch((err)=>errorHanlde(err,res))
     })
 
     //获取指定书目的分页信息
@@ -92,20 +109,21 @@ function book(app){
             menu.getMenuSelect().then(data=>{
                 sendSuccess(res,data)
             })
-        })
+        }).catch((err)=>errorHanlde(err,res))
     })
     //获取指定书目的菜单
     app.get("/getBookMenu",(req,res)=>{
         var bookName = getBookName(req,res)
-        if(!bookName)return
+        var origin = getOrigin(req,res)
+        if(!book||!origin)return
         var page = parseInt(req.query.page)||1
-        var book = getBook(bookName)
+        var book = getBook(bookName,origin)
         book.then(item=>{
             var menu = item.getMenu()
             menu.getMenuByPage(page).then(data=>{
                 sendSuccess(res,data)
             })
-        })
+        }).catch((err)=>errorHanlde(err,res))
     })
 
 
@@ -122,43 +140,27 @@ function book(app){
             article.getContent().then(data=>{
                 sendSuccess(res,data)
             })
-        })
+        }).catch((err)=>errorHanlde(err,res))
     })
 
-
-    app.get('/',(req,res)=>{
-        var chapter = req.query.id||1
-        getContent(chapter,res)
-    })
-    // app.get('/',(req,res)=>{
-    //     const origin = require('./originlib/BIQUGE')
-    //     var biquge = new origin()
-
-    //     var bookPromise = biquge.getBook("大主宰")
-    //     bookPromise.then(book=>{
-    //         var menu = book.getMenu()
-    //         menu.getMenuByPage(1).then(data=>{
-    //             var url = data[0].url
-    //             var article = menu.getArticle(url)
-    //             article.getContent().then(content=>{
-    //                 res.send(content)
-    //                 // console.log(content)
-    //             })
-    //         })
-    //     })
-    // })
 
     app.get('/getMenu',(req,res)=>{
         var book = createBook(req,res)
         if(!book)return
         book.getMenu(req).then(data=>{
             res.send(data)
-        })
+        }).catch((err)=>errorHanlde(err,res))
     })
 
-    app.get('/origin',(req,res)=>{
-        const origin = require('./originlib/BIQUGE')
-        console.log(origin)
+    //搜索书籍
+    app.get('/searchBook',(req,res)=>{
+        var book = getBookName(req,res)
+        var origin = getOrigin(req,res)
+        if(!book||!origin)return
+        var originF = require("./originlib/"+origin)
+        var bookObj = new originF().getListByName(book).then(data=>{
+            sendSuccess(res,data)
+        }).catch((err)=>errorHanlde(err,res))
     })
 
     app.get('/getLastMenu',(req,res)=>{
@@ -166,7 +168,7 @@ function book(app){
         if(!book)return
         book.getLastMenu().then(data=>{
             res.json(data)
-        })
+        }).catch((err)=>errorHanlde(err,res))
     })
 
 
@@ -179,7 +181,7 @@ function book(app){
             return
         }
         var artile = book.getArticle(url)
-        artile.getContent().then(data=>res.send(data))
+        artile.getContent().then(data=>res.send(data)).catch((err)=>errorHanlde(err,res))
     })
 
     app.get('/getArticleByURL',(req,res)=>{
@@ -189,7 +191,7 @@ function book(app){
             var lastitem = data[0]
             var artile = book.getArticle(lastitem.url)
             artile.getContent().then(data=>res.send(data))
-        })
+        }).catch((err)=>errorHanlde(err,res))
     })
 
     async function testf(res,url){

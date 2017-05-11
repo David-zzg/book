@@ -51,44 +51,5 @@ class Book{
     }
 }
 
-class Article{
-    constructor(url){
-        this.url = url||""
-    }
-}
-
-async function createCommonBook(name,options={}){
-    try{
-        var CommonBook = require('./booklib/'+name+2)
-        return new CommonBook(Object.assign({},options))
-    }catch(e){
-        return null
-    }
-}
-
-function createBook(req,res,options={}){
-    var bookname = getBookName(req)
-    try{
-        var CommonBook = require('./booklib/'+bookname+2)
-        return new CommonBook(Object.assign({},options))
-    }catch(e){
-        res.send('不存在')
-        return null
-    }
-}
-
-function getBookName(req){
-    var query = req.query
-    return query.bookname||""
-}
-
-function isBookExist(bookname){
-    try{
-        require('./booklib/'+bookname+'2')
-        return true
-    }catch(e){
-        return false
-    }
-}
 
 module.exports = Book

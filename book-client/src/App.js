@@ -7,8 +7,9 @@ import {
   Route,
   Link
 } from 'react-router-dom'
-import Main from './pages/Main'
+import Menu from './pages/Menu'
 import Page from './pages/Page'
+import Index from './pages/Index'
 
 /*const Main = ()=>{
   return (
@@ -26,9 +27,10 @@ class App extends Component {
       <Router>
           <div>
            
-            <Route exact path="/" component={Main} />
-            <Route  path="/menu/:book" component={Main} />
-            <Route  path="/detail/:book" component={Page} />
+            <Route exact path="/" component={Index} />
+            <Route path="/search/:book" component={Index} />
+            <Route  path="/menu/:origin/:book" component={Menu} />
+            <Route  path="/detail/:origin/:book" component={Page} />
           </div>
       </Router>
     );

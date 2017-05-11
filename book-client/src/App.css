@@ -73,3 +73,8 @@ ul{
   justify-content: space-between;
   padding: 10px 15px;
 }
+.search{
+  border:1px solid #eee;
+  outline: none;
+  padding: 10px;
+}
