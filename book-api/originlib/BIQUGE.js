@@ -147,8 +147,7 @@ class BIQUGE extends Origin{
     }
 
     //获取书籍
-    async getBook(name){
-        var url = await this.getURLByName(name)
+    async getBook(url){
         var book = new BIQUGE_BOOK({
             url
         })

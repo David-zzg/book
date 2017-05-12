@@ -7,10 +7,10 @@ export default class PageBox extends React.Component{
         data:{}
     }
     render(){
-        return <Page book={this.props.book} data={this.state.data}></Page>
+        return <Page origin={this.props.origin} book={this.props.book} data={this.state.data}></Page>
     }
     fetchData(){
-        request.get(`${window.API}/getChapterContent?book=${this.props.book}&from=${getQuery("from","")}`).then(data=>{
+        request.get(`${window.API}/getChapterContent?book=${getQuery("url","")}&from=${getQuery("from","")}&origin=${this.props.origin}`).then(data=>{
             this.setState({
                 data:data.data
             })

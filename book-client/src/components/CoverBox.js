@@ -1,17 +1,20 @@
 import React from "react"
 import Cover from './Cover'
 import ListView from '../elements/ListView'
-import axios from 'axios'
 import request from '../request'
-import {getQuery,redirect,getURL} from '../util'
-import {Link,Redirect} from 'react-router-dom'
+import {getQuery,redirect} from '../util'
+import {Link} from 'react-router-dom'
 
-const ListViewOptions = (book)=>({
+const ListViewOptions = (book,origin)=>({
     value:"str",
     href : function(item){
-        return getURL(book,item.url)
+        return `/detail/${origin}/${book}?from=${encodeURIComponent(item.url)}&url=${getQuery("url")}`
     }
 })
+
+const getURL = ()=>{
+    return decodeURIComponent(getQuery("url"))
+}
 export default class CoverBox extends React.Component{
     state={
         data:{},
@@ -23,7 +26,7 @@ export default class CoverBox extends React.Component{
     }
     redirect(offset){
         var page = getQuery("page",1)
-        var newpage = parseInt(page)+parseInt(offset)
+        var newpage = parseInt(page,10)+parseInt(offset,10)
         if(newpage>=1){
             return redirect({path:location.pathname+location.search,key:"page",value:newpage})
         }else{
@@ -32,11 +35,11 @@ export default class CoverBox extends React.Component{
     }
     render(){
         return <div>
-            <Cover book={this.props.book} data={this.state.data}></Cover>
+            <Cover origin={this.props.origin} book={this.props.book} data={this.state.data}></Cover>
             {/*简介*/}
             <section className="review" dangerouslySetInnerHTML={{__html: this.state.data.review}}></section>
             {/*目录*/}
-            <ListView className="menu"  list={this.state.menu} options={ListViewOptions(this.props.book)}></ListView>
+            <ListView className="menu"  list={this.state.menu} options={ListViewOptions(this.props.book,this.props.origin)}></ListView>
             <div className="menu_footer">
                 <Link className={this.state.pre?"btn":"disabel btn"} onClick={(e)=>{if(!this.state.pre){e.preventDefault()}}}  to={this.state.pre}>上一页</Link>
                 <select value={getQuery("page",1)} onChange={this.select.bind(this)}>
@@ -55,24 +58,24 @@ export default class CoverBox extends React.Component{
         this.fetchData(false)
     }
     fetchData(first=true){
-        var db = {}
-        var list = []
-        list.push(request.get(`${window. API}/getBookMenu?book=${this.props.book}&origin=${this.props.origin}&page=${getQuery("page",1)}`))
+        var url= getURL()
+        var list= []
+        list.push(request.get(`${window. API}/getBookMenu?book=${url}&origin=${this.props.origin}&page=${getQuery("page",1)}`))
         if(first){
             //获取书籍信息
-            list.push(request.get(`${window. API}/getBookInfo?book=${this.props.book}&origin=${this.props.origin}`))
+            list.push(request.get(`${window. API}/getBookInfo?book=${url}&origin=${this.props.origin}`))
             //获取分页信息
-            list.push(request.get(`${window. API}/getBookPage?book=${this.props.book}&origin=${this.props.origin}`))
+            list.push(request.get(`${window. API}/getBookPage?book=${url}&origin=${this.props.origin}`))
         }
         Promise.all(list).then((data)=>{
-            var state = {
+            var state= {
                 menu:data[0].data,
                 pre:this.redirect(-1),
                 next:this.redirect(1)
             }
             if(first){
-                state.data = data[1].data
-                state.select = data[2].data
+                state.data= data[1].data
+                state.select= data[2].data
             }
             this.setState(state)
         })

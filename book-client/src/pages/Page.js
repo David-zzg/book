@@ -1,5 +1,4 @@
 import React from "react"
-import {Link} from 'react-router-dom'
 import PageBox from "../components/PageBox"
 import Title from "../elements/Title"
 export default ({match,history})=><div>
@@ -8,5 +7,5 @@ export default ({match,history})=><div>
         <span className="title">{match.params.book}</span>
         <span></span>
     </Title>
-    <PageBox book={match.params.book}></PageBox>
+    <PageBox book={match.params.book} origin={match.params.origin}></PageBox>
 </div>

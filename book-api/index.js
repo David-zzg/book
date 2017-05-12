@@ -35,12 +35,12 @@ function book(app){
 
     var bookList = {}
 
-    async function getBook(name,from="BIQUGE"){
-        if(bookList[name])return bookList[name]
+    async function getBook(url,from="BIQUGE"){
+        if(bookList[url])return bookList[url]
         const origin = require('./originlib/'+from)
-        var biquge = new origin()
-        var book = await biquge.getBook(name)
-        bookList[name] = book
+        var originObj = new origin()
+        var book = await originObj.getBook(url)
+        bookList[url] = book
         return book
     }
 
@@ -93,7 +93,9 @@ function book(app){
     app.get("/getBookInfo",(req,res)=>{
         var bookName = getBookName(req,res)
         if(!bookName)return
-        var book = getBook(bookName)
+        var origin = getOrigin(req,res)
+        if(!origin)return
+        var book = getBook(bookName,origin)
         getCover(book).then(data=>{
             sendSuccess(res,data)
         }).catch((err)=>errorHanlde(err,res))
@@ -102,8 +104,10 @@ function book(app){
     //获取指定书目的分页信息
     app.get("/getBookPage",(req,res)=>{
         var bookName = getBookName(req,res)
-        if(!bookName){return}
-        var book = getBook(bookName)
+        if(!bookName)return
+        var origin = getOrigin(req,res)
+        if(!origin)return
+        var book = getBook(bookName,origin)
         book.then(item=>{
             var menu = item.getMenu()
             menu.getMenuSelect().then(data=>{
@@ -114,8 +118,9 @@ function book(app){
     //获取指定书目的菜单
     app.get("/getBookMenu",(req,res)=>{
         var bookName = getBookName(req,res)
+        if(!bookName)return
         var origin = getOrigin(req,res)
-        if(!book||!origin)return
+        if(!origin)return
         var page = parseInt(req.query.page)||1
         var book = getBook(bookName,origin)
         book.then(item=>{
@@ -133,10 +138,11 @@ function book(app){
         if(!chapter)return
         var bookName = getBookName(req,res)
         if(!bookName)return
-        var book = getBook(bookName)
+        var origin = getOrigin(req,res)
+        if(!origin)return
+        var book = getBook(bookName,origin)
         book.then(item=>{
             var article = item.getArticle(chapter)
-            console.log(chapter)
             article.getContent().then(data=>{
                 sendSuccess(res,data)
             })
@@ -155,8 +161,9 @@ function book(app){
     //搜索书籍
     app.get('/searchBook',(req,res)=>{
         var book = getBookName(req,res)
+        if(!book)return
         var origin = getOrigin(req,res)
-        if(!book||!origin)return
+        if(!origin)return
         var originF = require("./originlib/"+origin)
         var bookObj = new originF().getListByName(book).then(data=>{
             sendSuccess(res,data)

@@ -1,11 +1,8 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
 import './App.css';
-import Label from './elements/Label'
 import {
   BrowserRouter as Router,
-  Route,
-  Link
+  Route
 } from 'react-router-dom'
 import Menu from './pages/Menu'
 import Page from './pages/Page'
@@ -28,7 +25,7 @@ class App extends Component {
           <div>
            
             <Route exact path="/" component={Index} />
-            <Route path="/search/:book" component={Index} />
+            <Route path="/search/:origin/:book" component={Index} />
             <Route  path="/menu/:origin/:book" component={Menu} />
             <Route  path="/detail/:origin/:book" component={Page} />
           </div>
