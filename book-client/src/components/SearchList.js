@@ -1,5 +1,6 @@
 import React from "react"
 import Search from "../elements/Search"
+import Loading from "../elements/Loading"
 import request from '../request'
 import Cover from "./Cover"
 import {Link} from 'react-router-dom'
@@ -38,30 +39,32 @@ export default class SearchList extends React.Component{
     componentWillReceiveProps(nextProps) {
         this.fetchData()
     }
-    callback(){
+    callback(select){
         var param=this.getParam()
-        this.props.history.push("/search/"+param.origin+"/"+param.search)
+        if(!select||this.props.book){
+            this.props.history.push("/search/"+param.origin+"/"+param.search)
+        }
     }
     render(){
-        
         return <div>
             <div className="search-bar">
                 <Search  book={this.props.book} callback={this.callback.bind(this)}></Search>
-                <select id="origin" value={this.props.origin} onChange={this.callback.bind(this)}>
+                <select id="origin" value={this.props.origin} onChange={this.callback.bind(this,true)}>
                     <option value="BIQUGE">笔趣阁</option>
                     <option value="BOOKNET">顶点小说</option>
                 </select>
             </div>
-            
-            <ul>
-                {this.state.list.map((item,index)=>{
-                    return <li key={item.url}>
-                        <Link to={`/menu/${this.getParam().origin}/${item.name}?url=${encodeURIComponent(item.url)}&page=1`}>
-                            <Cover book={item.name} data={item}></Cover>
-                        </Link>
-                    </li>
-                })}
-            </ul>
+            <Loading loading={this.state.list.length==0&&this.props.book}>
+                <ul>
+                    {this.state.list.map((item,index)=>{
+                        return <li key={item.url}>
+                            <Link to={`/menu/${this.getParam().origin}/${item.name}?url=${encodeURIComponent(item.url)}&page=1`}>
+                                <Cover book={item.name} data={item}></Cover>
+                            </Link>
+                        </li>
+                    })}
+                </ul>
+            </Loading>
         </div>
     }
 }

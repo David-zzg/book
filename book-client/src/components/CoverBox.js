@@ -2,6 +2,7 @@ import React from "react"
 import Cover from './Cover'
 import ListView from '../elements/ListView'
 import request from '../request'
+import Loading from "../elements/Loading"
 import {getQuery,redirect} from '../util'
 import {Link} from 'react-router-dom'
 
@@ -35,19 +36,20 @@ export default class CoverBox extends React.Component{
     }
     render(){
         return <div>
-            <Cover origin={this.props.origin} book={this.props.book} data={this.state.data}></Cover>
-            {/*简介*/}
-            <section className="review" dangerouslySetInnerHTML={{__html: this.state.data.review}}></section>
-            {/*目录*/}
-            <ListView className="menu"  list={this.state.menu} options={ListViewOptions(this.props.book,this.props.origin)}></ListView>
-            <div className="menu_footer">
-                <Link className={this.state.pre?"btn":"disabel btn"} onClick={(e)=>{if(!this.state.pre){e.preventDefault()}}}  to={this.state.pre}>上一页</Link>
-                <select value={getQuery("page",1)} onChange={this.select.bind(this)}>
-                    {this.state.select.map(item=><option key={item.page} value={item.page}>{item.str}</option>)}
-                </select>
-                <Link className="btn" to={this.state.next}>下一页</Link>
-            </div>
-            
+            <Loading loading={this.state.menu.length==0}>
+                <Cover origin={this.props.origin} book={this.props.book} data={this.state.data}></Cover>
+                {/*简介*/}
+                <section className="review" dangerouslySetInnerHTML={{__html: this.state.data.review}}></section>
+                {/*目录*/}
+                <ListView className="menu"  list={this.state.menu} options={ListViewOptions(this.props.book,this.props.origin)}></ListView>
+                <div className="menu_footer">
+                    <Link className={this.state.pre?"btn":"disabel btn"} onClick={(e)=>{if(!this.state.pre){e.preventDefault()}}}  to={this.state.pre}>上一页</Link>
+                    <select value={getQuery("page",1)} onChange={this.select.bind(this)}>
+                        {this.state.select.map(item=><option key={item.page} value={item.page}>{item.str}</option>)}
+                    </select>
+                    <Link className="btn" to={this.state.next}>下一页</Link>
+                </div>
+            </Loading>
         </div>
     }
     select(e){
@@ -78,7 +80,11 @@ export default class CoverBox extends React.Component{
                 state.select= data[2].data
             }
             this.setState(state)
+            this.changeTitle()
         })
+    }
+    changeTitle(){
+        document.title = window.TITLE+"-"+this.props.book
     }
     componentWillMount() {
         this.fetchData()

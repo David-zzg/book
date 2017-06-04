@@ -18,7 +18,8 @@ class BIQUGE_ARTICLE extends Article{
         var data = {
             prev:getPrefix(this.url)+$('#pt_prev').attr("href"),
             next:getPrefix(this.url)+$('#pt_next').attr("href"),
-            content:this.getStr($)
+            content:this.getStr($),
+            title:$('.title').text()
         }
         return data
     }

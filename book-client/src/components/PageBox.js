@@ -14,6 +14,7 @@ export default class PageBox extends React.Component{
             this.setState({
                 data:data.data
             })
+            document.title = window.TITLE+"-"+this.props.book+"-"+data.data.title
         })
     }
     componentWillReceiveProps(nextProps) {
